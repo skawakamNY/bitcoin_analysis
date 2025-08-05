@@ -1,0 +1,51 @@
+[
+  {
+    "objectID": "models.html",
+    "href": "models.html",
+    "title": "Bitcoin Analysis",
+    "section": "",
+    "text": "# A tibble: 9 × 7\n  term         estimate std.error statistic  p.value conf.low conf.high\n  &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;\n1 (Intercept)   0.0982     0.0696     1.41  1.59e- 1 -0.0384     0.235 \n2 CPI           0.390      1.08       0.359 7.19e- 1 -1.74       2.52  \n3 FedRate       0.00227    0.0218     0.104 9.17e- 1 -0.0406     0.0451\n4 DXY          -0.783      0.282     -2.78  5.53e- 3 -1.34      -0.230 \n5 M2            0.871      0.442      1.97  4.90e- 2  0.00393    1.74  \n6 Unemployment  0.00469    0.0428     0.109 9.13e- 1 -0.0793     0.0887\n7 gold          0.132      0.0871     1.51  1.30e- 1 -0.0389     0.303 \n8 Treasury     -0.0962     0.0258    -3.73  1.95e- 4 -0.147     -0.0456\n9 dow           1.01       0.0711    14.2   7.37e-44  0.873      1.15"
+  },
+  {
+    "objectID": "models.html#linear-regression",
+    "href": "models.html#linear-regression",
+    "title": "Bitcoin Analysis",
+    "section": "Linear Regression",
+    "text": "Linear Regression\n\\[\\begin{align*}\n\\hat{\\text{BTC}} =\\ &\n0.0982\n+ 0.390 \\cdot \\text{CPI}\n+ 0.00227 \\cdot \\text{FedRate}\n- 0.783 \\cdot \\text{DXY} \\\\\n&\n+ 0.871 \\cdot \\text{M2}\n+ 0.00469 \\cdot \\text{Unemployment}\n+ 0.132 \\cdot \\text{Gold} \\\\\n&\n- 0.0962 \\cdot \\text{Treasury}\n+ 1.01 \\cdot \\text{Dow}\n\\end{align*}\\]\n\nCoefficient-by-Coefficient Interpretation\n\n\n\n\n\n\n\n\n\nTerm\nEstimate\nInterpretation\nStat. Significance\n\n\n\n\n(Intercept)\n0.0982\nWhen all predictors are 0, the expected Bitcoin price is 0.0982 (not very interpretable in practice).\n❌ Not significant\n\n\nCPI\n0.390\nA 1-unit increase in CPI is associated with a 0.39 increase in Bitcoin price.\n❌ Not significant (p = 0.719)\n\n\nFedRate\n0.00227\nChanges in the Fed Funds Rate have virtually no effect on Bitcoin price.\n❌ Not significant (p = 0.917)\n\n\nDXY\n-0.783\nA 1-unit increase in the dollar index (DXY) is associated with a 0.783 decrease in Bitcoin price.\n✅ Significant (p = 0.0055)\n\n\nM2\n0.871\nA 1-unit increase in the M2 money supply is associated with a 0.871 increase in Bitcoin price.\n✅ Marginally significant (p = 0.049)\n\n\nUnemployment\n0.00469\nNo meaningful relationship between unemployment rate and Bitcoin price.\n❌ Not significant (p = 0.913)\n\n\nGold\n0.132\nWeakly positive correlation with gold prices, but not strong or reliable.\n❌ Not significant (p = 0.130)\n\n\nTreasury\n-0.0962\nA 1-unit increase in 10-year Treasury yield predicts a 0.0962 decrease in Bitcoin price.\n✅ Significant (p = 0.000195)\n\n\nDow\n1.01\nA 1-unit increase in the Dow Jones Index is associated with a 1.01 increase in Bitcoin price.\n✅ Very significant (p ≈ 0)\n\n\n\n✅ Most Important Predictors Strongest Positive Influence:\ndow (very strong correlation)\nM2 (positive monetary supply effect)\nStrongest Negative Influence:\nDXY (strong inverse relationship with the dollar index)\nTreasury (higher yields hurt Bitcoin price)\nInsignificant Variables CPI, FedRate, Unemployment, and Gold show no statistically significant effect in this model. That means their estimated impact on Bitcoin is uncertain or likely due to noise."
+  },
+  {
+    "objectID": "models.html#conclusion",
+    "href": "models.html#conclusion",
+    "title": "Bitcoin Analysis",
+    "section": "Conclusion",
+    "text": "Conclusion\nBitcoin price is significantly influenced by movements in the Dow Jones, U.S. Dollar Index (DXY), M2 money supply, and Treasury yields. Other variables like CPI, Fed rate, unemployment, and gold do not show statistically significant relationships."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Bitcoin Analysis",
+    "section": "",
+    "text": "My name is Shuntaro Kawakami (Email: skawakam@hotmail.com), GitHub account https://github.com/skawakamNY,"
+  },
+  {
+    "objectID": "about.html#about-me",
+    "href": "about.html#about-me",
+    "title": "Bitcoin Analysis",
+    "section": "",
+    "text": "My name is Shuntaro Kawakami (Email: skawakam@hotmail.com), GitHub account https://github.com/skawakamNY,"
+  },
+  {
+    "objectID": "about.html#about-this-project",
+    "href": "about.html#about-this-project",
+    "title": "Bitcoin Analysis",
+    "section": "About This Project",
+    "text": "About This Project\nThe project aims to find any macroeconomic indicator that help predicting upward/downward trend of bitcoin price https://github.com/skawakamNY/bitcoin_analysis.\nThis project was created as a part of David Kane’s Data Science Bootcamp."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Bitcoin Analysis",
+    "section": "",
+    "text": "Estimating the price of Bitcoin is more difficult than valuing stocks or bonds because it lacks intrinsic cash flows, is driven by speculative demand, and is highly sensitive to volatile sentiment and regulatory shifts. This project aims to investigate whether macroeconomic indicators—such as economic statistics, stock indices, bond rates, and currency strength—can serve as reliable references for identifying trends in Bitcoin’s price direction. By analyzing historical data and exploring correlations, the study seeks to understand if Bitcoin behaves similarly to traditional financial assets or exhibits unique drivers. The goal is to determine whether these conventional metrics offer predictive value in the context of cryptocurrency markets."
+  }
+]
