@@ -1,0 +1,11 @@
+---
+execute:
+    echo: false
+---
+## About Me
+My name is Shuntaro Kawakami (Email: [skawakam@hotmail.com](skawakam@hotmail.com)), GitHub account [https://github.com/skawakamNY](https://github.com/skawakamNY),
+
+## About This Project
+The project aims to find any macroeconomic indicator that help predicting upward/downward trend of bitcoin price [https://github.com/skawakamNY/bitcoin_analysis](https://github.com/skawakamNY/bitcoin_analysis).  
+
+This project was created as a part of [David Kane’s Data Science Bootcamp](https://bootcamp.davidkane.info/).

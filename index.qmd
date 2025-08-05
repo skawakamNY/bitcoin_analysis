@@ -1,0 +1,8 @@
+---
+title: "Bitcoin Analysis"
+author: "Shuntaro Kawakami"
+execute:
+    echo: false
+---
+
+Estimating the price of Bitcoin is more difficult than valuing stocks or bonds because it lacks intrinsic cash flows, is driven by speculative demand, and is highly sensitive to volatile sentiment and regulatory shifts.  This project aims to investigate whether macroeconomic indicators—such as economic statistics, stock indices, bond rates, and currency strength—can serve as reliable references for identifying trends in Bitcoin’s price direction. By analyzing historical data and exploring correlations, the study seeks to understand if Bitcoin behaves similarly to traditional financial assets or exhibits unique drivers. The goal is to determine whether these conventional metrics offer predictive value in the context of cryptocurrency markets.
