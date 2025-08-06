@@ -49,6 +49,7 @@ invisible(getSymbols(c("CPIAUCSL", "FEDFUNDS", "DTWEXBGS", "M2SL", "UNRATE", "DG
 # Combine datasets
 data <- merge(btc, CPIAUCSL, FEDFUNDS, DTWEXBGS, M2SL, UNRATE, DGS10, gold, dow)
 colnames(data) <- c("BTC", "CPI", "FedRate", "DXY", "M2", "Unemployment", "Treasury", "gold", "dow")
+#colnames(data) <- c("Bitcoin Price", "Consumer Price Index", "Federal Funds Rate", "U.S. Dollar Index", "M2 Money Supply", "Unemployment Rate", "10 Year Treasury Yield", "Gold Price", "Dow Jones Index")
 
 # Fill missing values forward and drop remaining NAs
 data <- na.locf(data)
@@ -59,6 +60,44 @@ data <- na.omit(data)
 returns <- diff(log(data)) * 100
 returns <- na.omit(returns)
 #head(returns)
+```
+
+```{r}
+library(tidyverse)
+library(zoo)
+
+# Convert to data frame with Date column
+df <- data.frame(date = index(data), coredata(data))
+
+# Normalize each column using Z-score
+df_norm <- df %>%
+  pivot_longer(-date, names_to = "Variable", values_to = "Value") %>%
+  group_by(Variable) %>%
+  mutate(Normalized = (Value - mean(Value, na.rm = TRUE)) / sd(Value, na.rm = TRUE)) %>%
+  ungroup()
+
+# Extract normalized BTC as reference
+btc_norm <- df_norm %>% filter(Variable == "BTC") %>% rename(BTC_Normalized = Normalized) %>% dplyr::select(date, BTC_Normalized)
+
+# Join BTC to all other variables for each date
+df_compare <- df_norm %>%
+  filter(Variable != "BTC") %>%
+  left_join(btc_norm, by = "date")
+
+# Plot: points for both BTC and the indicator per facet
+ggplot(df_compare, aes(x = date)) +
+  geom_point(aes(y = Normalized, color = "Other Macroeconomic Indicators"), alpha = 0.5, size = 0.5) +
+  geom_point(aes(y = BTC_Normalized, color = "BTC"), alpha = 0.5, size = 0.5) +
+  facet_wrap(~ Variable, scales = "free_y", ncol = 3) +
+  scale_color_manual(values = c("BTC" = "orange", "Other Macroeconomic Indicators" = "blue")) +
+  labs(
+    title = "Normalized BTC vs. Each Indicator",
+    x = "Date",
+    y = "Normalized Value",
+    color = "Legend"
+  ) +
+  theme_minimal()
+
 ```
 ## Linear Regression
 To analyze the relationship between macroeconomic indicators and Bitcoin price, a linear regression model was employed. This approach is appropriate because it allows us to quantify the individual effect of each predictor—such as CPI, interest rates, money supply (M2), and the stock market—on the response variable, Bitcoin price, while controlling for the influence of other variables. Linear regression is a widely used and interpretable statistical method for modeling continuous outcomes and identifying statistically significant predictors. By fitting the model, we were able to estimate coefficients for each macroeconomic factor, assess their significance using p-values, and construct confidence intervals to understand the precision of our estimates. The model helps determine which variables have meaningful associations with Bitcoin price and whether these relationships are positive or negative.
