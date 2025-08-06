@@ -1,0 +1,255 @@
+---
+title: "Bitcoin Analysis"
+format: html
+execute:
+    echo: false
+---
+
+
+```{r}
+#| label: setup
+#| warning: false
+#| message: false
+library(quantmod)
+library(tidyverse)
+library(tidymodels)
+library(lubridate)
+library(tseries)
+library(lmtest)
+library(vars)
+library(corrplot)
+
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(scales)
+```
+
+
+```{r}
+#| label: load_data
+#| warning: false
+#| message: false
+# Bitcoin price (daily)
+invisible(getSymbols("BTC-USD", src = "yahoo", from = "2020-01-01", to = "2025-07-31"))
+btc <- `BTC-USD`[, "BTC-USD.Adjusted"]
+
+invisible(getSymbols("GC=F", src = "yahoo", from = "2020-01-01", to = "2025-07-31"))
+gold <- `GC=F`[, "GC=F.Adjusted"]
+
+invisible(getSymbols("^DJI", src = "yahoo", from = "2020-01-01", to = "2025-07-31"))
+dow <- DJI[, "DJI.Adjusted"]
+
+invisible(getSymbols("DX-Y.NYB", src = "yahoo", from = "2020-01-01", to = "2025-07-31"))  # May work for DXY
+dxy <- `DX-Y.NYB`[, "DX-Y.NYB.Adjusted"]
+
+# Macroeconomic indicators from FRED
+invisible(getSymbols(c("CPIAUCSL", "FEDFUNDS", "DTWEXBGS", "M2SL", "UNRATE", "DGS10"), src = "FRED", from = "2020-01-01", to = "2025-07-31"))
+
+# Combine datasets
+data <- merge(btc, CPIAUCSL, FEDFUNDS, DTWEXBGS, M2SL, UNRATE, DGS10, gold, dow)
+colnames(data) <- c("BTC", "CPI", "FedRate", "DXY", "M2", "Unemployment", "Treasury", "gold", "dow")
+#colnames(data) <- c("Bitcoin Price", "Consumer Price Index", "Federal Funds Rate", "U.S. Dollar Index", "M2 Money Supply", "Unemployment Rate", "10 Year Treasury Yield", "Gold Price", "Dow Jones Index")
+
+# Fill missing values forward and drop remaining NAs
+data <- na.locf(data)
+data <- na.omit(data)
+```
+```{r}
+# Log returns (percent change)
+returns <- diff(log(data)) * 100
+returns <- na.omit(returns)
+#head(returns)
+```
+
+```{r}
+library(tidyverse)
+library(zoo)
+
+# Convert to data frame with Date column
+df <- data.frame(date = index(data), coredata(data))
+
+# Normalize each column using Z-score
+df_norm <- df %>%
+  pivot_longer(-date, names_to = "Variable", values_to = "Value") %>%
+  group_by(Variable) %>%
+  mutate(Normalized = (Value - mean(Value, na.rm = TRUE)) / sd(Value, na.rm = TRUE)) %>%
+  ungroup()
+
+# Extract normalized BTC as reference
+btc_norm <- df_norm %>% filter(Variable == "BTC") %>% rename(BTC_Normalized = Normalized) %>% dplyr::select(date, BTC_Normalized)
+
+# Join BTC to all other variables for each date
+df_compare <- df_norm %>%
+  filter(Variable != "BTC") %>%
+  left_join(btc_norm, by = "date")
+
+# Plot: points for both BTC and the indicator per facet
+ggplot(df_compare, aes(x = date)) +
+  geom_point(aes(y = Normalized, color = "Other Macroeconomic Indicators"), alpha = 0.5, size = 0.5) +
+  geom_point(aes(y = BTC_Normalized, color = "BTC"), alpha = 0.5, size = 0.5) +
+  facet_wrap(~ Variable, scales = "free_y", ncol = 3) +
+  scale_color_manual(values = c("BTC" = "orange", "Other Macroeconomic Indicators" = "blue")) +
+  labs(
+    title = "Normalized BTC vs. Each Indicator",
+    x = "Date",
+    y = "Normalized Value",
+    color = "Legend"
+  ) +
+  theme_minimal()
+
+```
+## Linear Regression
+To analyze the relationship between macroeconomic indicators and Bitcoin price, a linear regression model was employed. This approach is appropriate because it allows us to quantify the individual effect of each predictor—such as CPI, interest rates, money supply (M2), and the stock market—on the response variable, Bitcoin price, while controlling for the influence of other variables. Linear regression is a widely used and interpretable statistical method for modeling continuous outcomes and identifying statistically significant predictors. By fitting the model, we were able to estimate coefficients for each macroeconomic factor, assess their significance using p-values, and construct confidence intervals to understand the precision of our estimates. The model helps determine which variables have meaningful associations with Bitcoin price and whether these relationships are positive or negative.
+```{r}
+reg <- lm(BTC ~ CPI + FedRate + DXY + M2 + Unemployment + gold + Treasury + dow, data = as.data.frame(returns))
+reg |> tidy(conf.int = TRUE)
+```
+
+## Linear Regression Model
+\begin{align*}
+\hat{\text{BTC}} =\ & 
+\beta_0 
++ \beta_1 \cdot \text{CPI} \quad (\beta_1 = 0.390) \\
+& + \beta_2 \cdot \text{FedRate} \quad (\beta_2 = 0.00227) \\
+& + \beta_3 \cdot \text{DXY} \quad (\beta_3 = -0.783) \\
+& + \beta_4 \cdot \text{M2} \quad (\beta_4 = 0.871) \\
+& + \beta_5 \cdot \text{Unemployment} \quad (\beta_5 = 0.00469) \\
+& + \beta_6 \cdot \text{Gold} \quad (\beta_6 = 0.132) \\
+& + \beta_7 \cdot \text{Treasury} \quad (\beta_7 = -0.0962) \\
+& + \beta_8 \cdot \text{Dow} \quad (\beta_8 = 1.01)
+\end{align*}
+
+### Coefficient-by-Coefficient Interpretation
+| Term         | Estimate | Interpretation                                                                                                 | Stat. Significance                  |
+|--------------|----------|----------------------------------------------------------------------------------------------------------------|-------------------------------------|
+| (Intercept)            | 0.0982   | When all predictors are 0, the expected Bitcoin price is 0.0982 (not very interpretable in practice).          | ❌ Not significant                  |
+| Consumer Price Index   | 0.390    | A 1-unit increase in CPI is associated with a 0.39 increase in Bitcoin price.                                 | ❌ Not significant (p = 0.719)      |
+| Federal Funds Rate     | 0.00227  | Changes in the Fed Funds Rate have virtually no effect on Bitcoin price.                                      | ❌ Not significant (p = 0.917)      |
+| U.S. Dollar Index      | -0.783   | A 1-unit increase in the dollar index (DXY) is associated with a 0.783 decrease in Bitcoin price.             | ✅ Significant (p = 0.0055)         |
+| M2 Money Supply        | 0.871    | A 1-unit increase in the M2 money supply is associated with a 0.871 increase in Bitcoin price.                | ✅ Marginally significant (p = 0.049)|
+| Unemployment Rate      | 0.00469  | No meaningful relationship between unemployment rate and Bitcoin price.                                       | ❌ Not significant (p = 0.913)      |
+| Gold Price             | 0.132    | Weakly positive correlation with gold prices, but not strong or reliable.                                     | ❌ Not significant (p = 0.130)      |
+| 10 Year Treasury Yield | -0.0962  | A 1-unit increase in 10-year Treasury yield predicts a 0.0962 decrease in Bitcoin price.                      | ✅ Significant (p = 0.000195)       |
+| Dow Jones Index        | 1.01     | A 1-unit increase in the Dow Jones Index is associated with a 1.01 increase in Bitcoin price.                 | ✅ Very significant (p ≈ 0)         |
+
+✅ **Most Important Predictors**
+
+**Strongest Positive Influence**<br>
+Dow Jones Index (very strong correlation)<br>
+M2 Money Supply (positive monetary supply effect)<br>
+
+**Strongest Negative Influence**<br>
+U.S. Dollar Index (strong inverse relationship with the dollar index)<br>
+10 Year Treasury Yield (higher yields hurt Bitcoin price)<br>
+
+**Insignificant Variables**<br>
+Consumer Price Index, Federal Funds Rate, Unemployment Rate, and Gold Price show no statistically significant effect in this model. That means their estimated impact on Bitcoin is uncertain or likely due to noise.
+
+## Granger Causality
+To further investigate the directional relationships between Bitcoin price and key macroeconomic indicators, Granger causality analysis was conducted. This method is appropriate because it tests whether past values of one time series (e.g., interest rates, money supply, or inflation) can help predict future values of another time series (in this case, Bitcoin price), beyond what is explained by the past values of Bitcoin itself. Unlike simple correlation, which only captures contemporaneous association, Granger causality is particularly suited for time-series data where temporal ordering matters. It helps uncover potential lead-lag dynamics and predictive influence among variables.
+
+**Bitcoin Price and Dow Jones Index**
+```{r}
+var_data_btc_dow <- returns[, c("BTC", "dow")]
+var_model_btc_dow <- VAR(var_data_btc_dow, p = 5, type = "const")
+
+granger_result_btc_dow <- causality(var_model_btc_dow, cause = "dow")
+granger_result_btc_dow$Granger
+```
+**Bitcoin Price and 10 Year Treasury Yield**
+```{r}
+var_data_btc_treasury <- returns[, c("BTC", "Treasury")]
+var_model_btc_treasury <- VAR(var_data_btc_treasury, p = 5, type = "const")
+
+granger_result_btc_treasury <- causality(var_model_btc_treasury, cause = "Treasury")
+granger_result_btc_treasury$Granger
+```
+**Bitcoin Price and Gold Price**
+```{r}
+var_data_btc_gold <- returns[, c("BTC", "gold")]
+var_model_btc_gold <- VAR(var_data_btc_gold, p = 5, type = "const")
+
+granger_result_btc_gold <- causality(var_model_btc_gold, cause = "gold")
+granger_result_btc_gold$Granger
+```
+**Bitcoin Price and Unemployment Rate**
+```{r}
+var_data_btc_unemployment <- returns[, c("BTC", "Unemployment")]
+var_model_btc_unemployment <- VAR(var_data_btc_unemployment, p = 5, type = "const")
+
+granger_result_btc_unemployment <- causality(var_model_btc_unemployment, cause = "Unemployment")
+granger_result_btc_unemployment$Granger
+```
+**Bitcoin Price and M2 Money Supply**
+```{r}
+var_data_btc_m2 <- returns[, c("BTC", "M2")]
+var_model_btc_m2 <- VAR(var_data_btc_m2, p = 5, type = "const")
+
+granger_result_btc_m2 <- causality(var_model_btc_m2, cause = "M2")
+granger_result_btc_m2$Granger
+```
+**Bitcoin Price and U.S. Dollar Index**
+```{r}
+var_data_btc_dxy <- returns[, c("BTC", "DXY")]
+var_model_btc_dxy <- VAR(var_data_btc_dxy, p = 5, type = "const")
+
+granger_result_btc_dxy <- causality(var_model_btc_dxy, cause = "DXY")
+granger_result_btc_dxy$Granger
+```
+**Bitcoin Price and Federal Funds Rate**
+```{r}
+var_data_btc_fedrate <- returns[, c("BTC", "FedRate")]
+var_model_btc_fedrate <- VAR(var_data_btc_fedrate, p = 5, type = "const")
+
+granger_result_btc_fedrate <- causality(var_model_btc_fedrate, cause = "FedRate")
+granger_result_btc_fedrate$Granger
+```
+**Bitcoin Price and Consumer Price Index**
+```{r}
+var_data_btc_cpi <- returns[, c("BTC", "CPI")]
+var_model_btc_cpi <- VAR(var_data_btc_cpi, p = 5, type = "const")
+
+granger_result_btc_cpi <- causality(var_model_btc_cpi, cause = "CPI")
+granger_result_btc_cpi$Granger
+```
+✅ **Significant Granger Causality**
+
+**10 Year Treasury Yield**<br>
+*p-value = 0.03218*<br>
+Since the p-value is less than 0.05, we reject the null hypothesis.
+
+**Interpretation:** Past values of 10 Year Treasury Yield Granger-cause Bitcoin price. This suggests that interest rate movements (as captured by 10 Year Treasury Yield) have predictive power over Bitcoin prices.
+
+⚠️ **Marginal/Weak Evidence of Granger Causality**
+
+**M2 Money Supply**<br>
+*p-value = 0.09425*<br>
+
+Although the result is not statistically significant at the 5% level, it is close to the 10% threshold.
+
+**Interpretation:** There is some weak evidence that changes in money supply may help forecast Bitcoin price, but it's not strong enough to draw firm conclusions.
+
+**U.S. Dollar Index (DXY)**<br>
+*p-value = 0.07193*<br>
+Similar to M2, the result is marginally significant at the 10% level, suggesting a potential predictive relationship.
+
+**Interpretation:** Dollar strength may have some predictive influence on Bitcoin, though the evidence is not strong at conventional significance levels.
+
+❌ **No Granger Causality Detected**
+
+**Dow Jones Index** (*p = 0.7632*)<br>
+**Gold Price** (*p = 0.3111*)<br>
+**Unemployment Rate** (*p = 0.4102*)<br>
+**Federal Funds Rate** (*p = 0.1282*)<br>
+**Consumer Price Index (CPI)** (*p = 0.4767*)<br>
+
+For all of these indicators, the p-values are well above 0.10, meaning we fail to reject the null hypothesis.
+Interpretation: There is no statistical evidence that these variables Granger-cause Bitcoin price. Their past values do not help predict Bitcoin movements in this model.
+
+## Conclusion
+The analysis integrates insights from both a multiple linear regression model and Granger causality tests to assess the influence of various macroeconomic indicators on Bitcoin prices.
+
+From the linear regression model, several predictors showed statistically significant relationships with Bitcoin price. Most notably, the Dow Jones Index exhibited a strong positive association (p < 0.001), suggesting that increases in stock market performance correlate with higher Bitcoin prices. 10 Year Treasury Yield had a significant negative effect (p < 0.001), indicating that higher interest rates may dampen Bitcoin demand, possibly due to rising opportunity costs. DXY (Dollar Index) also showed a significant negative effect (p = 0.005), implying that Bitcoin tends to decline as the U.S. dollar strengthens. Meanwhile, M2 money supply had a moderate positive effect (p ≈ 0.049), suggesting liquidity expansion may support Bitcoin valuation. Other variables like CPI, FedRate, Unemployment, and Gold did not exhibit statistically significant impacts in the regression model.
+
+In contrast, the Granger causality analysis, which captures predictive relationships over time, revealed that 10 Year Treasury Yield Granger-cause Bitcoin price (p = 0.032), confirming their temporal influence. M2 money supply (p = 0.094) and DXY (p = 0.072) provided weak evidence of predictive power at the 10% significance level, but other indicators including the Dow Jones, despite its strong regression coefficient, did not Granger-cause Bitcoin price. This implies that while these factors may co-move with Bitcoin (as seen in regression), they do not necessarily have predictive power over Bitcoin's future movements.
