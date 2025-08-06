@@ -123,15 +123,15 @@ reg |> tidy(conf.int = TRUE)
 ### Coefficient-by-Coefficient Interpretation
 | Term         | Estimate | Interpretation                                                                                                 | Stat. Significance                  |
 |--------------|----------|----------------------------------------------------------------------------------------------------------------|-------------------------------------|
-| (Intercept)  | 0.0982   | When all predictors are 0, the expected Bitcoin price is 0.0982 (not very interpretable in practice).          | ❌ Not significant                  |
-| CPI          | 0.390    | A 1-unit increase in CPI is associated with a 0.39 increase in Bitcoin price.                                 | ❌ Not significant (p = 0.719)      |
-| FedRate      | 0.00227  | Changes in the Fed Funds Rate have virtually no effect on Bitcoin price.                                      | ❌ Not significant (p = 0.917)      |
-| DXY          | -0.783   | A 1-unit increase in the dollar index (DXY) is associated with a 0.783 decrease in Bitcoin price.             | ✅ Significant (p = 0.0055)         |
-| M2           | 0.871    | A 1-unit increase in the M2 money supply is associated with a 0.871 increase in Bitcoin price.                | ✅ Marginally significant (p = 0.049)|
-| Unemployment | 0.00469  | No meaningful relationship between unemployment rate and Bitcoin price.                                       | ❌ Not significant (p = 0.913)      |
-| Gold         | 0.132    | Weakly positive correlation with gold prices, but not strong or reliable.                                     | ❌ Not significant (p = 0.130)      |
-| Treasury     | -0.0962  | A 1-unit increase in 10-year Treasury yield predicts a 0.0962 decrease in Bitcoin price.                      | ✅ Significant (p = 0.000195)       |
-| Dow          | 1.01     | A 1-unit increase in the Dow Jones Index is associated with a 1.01 increase in Bitcoin price.                 | ✅ Very significant (p ≈ 0)         |
+| (Intercept)            | 0.0982   | When all predictors are 0, the expected Bitcoin price is 0.0982 (not very interpretable in practice).          | ❌ Not significant                  |
+| Consumer Price Index   | 0.390    | A 1-unit increase in CPI is associated with a 0.39 increase in Bitcoin price.                                 | ❌ Not significant (p = 0.719)      |
+| Federal Funds Rate     | 0.00227  | Changes in the Fed Funds Rate have virtually no effect on Bitcoin price.                                      | ❌ Not significant (p = 0.917)      |
+| U.S. Dollar Index      | -0.783   | A 1-unit increase in the dollar index (DXY) is associated with a 0.783 decrease in Bitcoin price.             | ✅ Significant (p = 0.0055)         |
+| M2 Money Supply        | 0.871    | A 1-unit increase in the M2 money supply is associated with a 0.871 increase in Bitcoin price.                | ✅ Marginally significant (p = 0.049)|
+| Unemployment Rate      | 0.00469  | No meaningful relationship between unemployment rate and Bitcoin price.                                       | ❌ Not significant (p = 0.913)      |
+| Gold Price             | 0.132    | Weakly positive correlation with gold prices, but not strong or reliable.                                     | ❌ Not significant (p = 0.130)      |
+| 10 Year Treasury Yield | -0.0962  | A 1-unit increase in 10-year Treasury yield predicts a 0.0962 decrease in Bitcoin price.                      | ✅ Significant (p = 0.000195)       |
+| Dow Jones Index        | 1.01     | A 1-unit increase in the Dow Jones Index is associated with a 1.01 increase in Bitcoin price.                 | ✅ Very significant (p ≈ 0)         |
 
 ✅ **Most Important Predictors**
 
