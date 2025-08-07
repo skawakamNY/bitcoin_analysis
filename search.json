@@ -37,42 +37,42 @@
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "Bitcoin Analysis",
+    "title": "Bitcoin Price Trend Analysis",
     "section": "",
     "text": "My name is Shuntaro Kawakami (Email: skawakam@hotmail.com), GitHub account https://github.com/skawakamNY,"
   },
   {
     "objectID": "about.html#about-me",
     "href": "about.html#about-me",
-    "title": "Bitcoin Analysis",
+    "title": "Bitcoin Price Trend Analysis",
     "section": "",
     "text": "My name is Shuntaro Kawakami (Email: skawakam@hotmail.com), GitHub account https://github.com/skawakamNY,"
   },
   {
     "objectID": "about.html#about-this-project",
     "href": "about.html#about-this-project",
-    "title": "Bitcoin Analysis",
+    "title": "Bitcoin Price Trend Analysis",
     "section": "About This Project",
     "text": "About This Project\nThe project aims to find any macroeconomic indicator that help predicting upward/downward trend of bitcoin price https://github.com/skawakamNY/bitcoin_analysis.\nThis project was created as a part of David Kane’s Data Science Bootcamp."
   },
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Bitcoin Analysis",
+    "title": "Bitcoin Price Trend Analysis",
     "section": "",
     "text": "Estimating the price of Bitcoin is more difficult than valuing stocks or bonds because it lacks intrinsic cash flows, is driven by speculative demand, and is highly sensitive to volatile sentiment and regulatory shifts. This project aims to investigate whether macroeconomic indicators—such as economic statistics, stock indices, bond rates, and currency strength—can serve as reliable references for identifying trends in Bitcoin’s price direction. By analyzing historical data and exploring correlations, the study seeks to understand if Bitcoin behaves similarly to traditional financial assets or exhibits unique drivers. The goal is to determine whether these conventional metrics offer predictive value in the context of cryptocurrency markets."
   },
   {
     "objectID": "index.html#introduction",
     "href": "index.html#introduction",
-    "title": "Bitcoin Analysis",
+    "title": "Bitcoin Price Trend Analysis",
     "section": "",
     "text": "Estimating the price of Bitcoin is more difficult than valuing stocks or bonds because it lacks intrinsic cash flows, is driven by speculative demand, and is highly sensitive to volatile sentiment and regulatory shifts. This project aims to investigate whether macroeconomic indicators—such as economic statistics, stock indices, bond rates, and currency strength—can serve as reliable references for identifying trends in Bitcoin’s price direction. By analyzing historical data and exploring correlations, the study seeks to understand if Bitcoin behaves similarly to traditional financial assets or exhibits unique drivers. The goal is to determine whether these conventional metrics offer predictive value in the context of cryptocurrency markets."
   },
   {
     "objectID": "index.html#data",
     "href": "index.html#data",
-    "title": "Bitcoin Analysis",
+    "title": "Bitcoin Price Trend Analysis",
     "section": "Data",
     "text": "Data\nThe macroeconomic indicators that were chosen for in depth analysis in this project were Federal Funds Rate,Consumer Price Index, U.S. Dollar Index, M2 Money Supply, Gold Price, Unemployment Rate, 10 Year Treasury Yield and Dow Jones Index where Consumer Price Index, Federal Funds Rate, U.S. Dollar Index,M2 Money Supply, Unemployment Rate were collected from https://fred.stlouisfed.org/ and Bitcoin Price, 10 Year Treasury Yield and Dow Jones Index, Gold Price were collected from https://finance.yahoo.com/. All source data were merged into single data set where estimation of coefficients, p-values, and confident intervals were computed by fitting them into linear regression models."
   }
