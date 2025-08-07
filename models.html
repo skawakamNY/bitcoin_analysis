@@ -178,15 +178,6 @@ window.Quarto = {
 </header>
 
 
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="models_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
 <section id="linear-regression" class="level2">
 <h2 class="anchored" data-anchor-id="linear-regression">Linear Regression</h2>
 <p>To analyze the relationship between macroeconomic indicators and Bitcoin price, a linear regression model was employed. This approach is appropriate because it allows us to quantify the individual effect of each predictor—such as CPI, interest rates, money supply (M2), and the stock market—on the response variable, Bitcoin price, while controlling for the influence of other variables. Linear regression is a widely used and interpretable statistical method for modeling continuous outcomes and identifying statistically significant predictors. By fitting the model, we were able to estimate coefficients for each macroeconomic factor, assess their significance using p-values, and construct confidence intervals to understand the precision of our estimates. The model helps determine which variables have meaningful associations with Bitcoin price and whether these relationships are positive or negative.</p>
@@ -243,59 +234,59 @@ window.Quarto = {
 <td>(Intercept)</td>
 <td>0.0982</td>
 <td>When all predictors are 0, the expected Bitcoin price is 0.0982 (not very interpretable in practice).</td>
-<td>❌ Not significant</td>
+<td><span style="color:red;"><strong>Not significant</strong></span></td>
 </tr>
 <tr class="even">
 <td>Consumer Price Index</td>
 <td>0.390</td>
 <td>A 1-unit increase in CPI is associated with a 0.39 increase in Bitcoin price.</td>
-<td>❌ Not significant (p = 0.719)</td>
+<td><span style="color:red;"><strong>Not significant (p = 0.719)</strong></span></td>
 </tr>
 <tr class="odd">
 <td>Federal Funds Rate</td>
 <td>0.00227</td>
 <td>Changes in the Fed Funds Rate have virtually no effect on Bitcoin price.</td>
-<td>❌ Not significant (p = 0.917)</td>
+<td><span style="color:red;"><strong>Not significant (p = 0.917)</strong></span></td>
 </tr>
 <tr class="even">
 <td>U.S. Dollar Index</td>
 <td>-0.783</td>
 <td>A 1-unit increase in the dollar index (DXY) is associated with a 0.783 decrease in Bitcoin price.</td>
-<td>✅ Significant (p = 0.0055)</td>
+<td><span style="color:green;"><strong>Significant (p = 0.0055)</strong></span></td>
 </tr>
 <tr class="odd">
 <td>M2 Money Supply</td>
 <td>0.871</td>
 <td>A 1-unit increase in the M2 money supply is associated with a 0.871 increase in Bitcoin price.</td>
-<td>✅ Marginally significant (p = 0.049)</td>
+<td><span style="color:green;"><strong>Marginally significant (p = 0.049)</strong></span></td>
 </tr>
 <tr class="even">
 <td>Unemployment Rate</td>
 <td>0.00469</td>
 <td>No meaningful relationship between unemployment rate and Bitcoin price.</td>
-<td>❌ Not significant (p = 0.913)</td>
+<td><span style="color:red;"><strong>Not significant (p = 0.913)</strong></span></td>
 </tr>
 <tr class="odd">
 <td>Gold Price</td>
 <td>0.132</td>
 <td>Weakly positive correlation with gold prices, but not strong or reliable.</td>
-<td>❌ Not significant (p = 0.130)</td>
+<td><span style="color:red;"><strong>Not significant (p = 0.130)</strong></span></td>
 </tr>
 <tr class="even">
 <td>10 Year Treasury Yield</td>
 <td>-0.0962</td>
 <td>A 1-unit increase in 10-year Treasury yield predicts a 0.0962 decrease in Bitcoin price.</td>
-<td>✅ Significant (p = 0.000195)</td>
+<td><span style="color:green;"><strong>Significant (p = 0.000195)</strong></span></td>
 </tr>
 <tr class="odd">
 <td>Dow Jones Index</td>
 <td>1.01</td>
 <td>A 1-unit increase in the Dow Jones Index is associated with a 1.01 increase in Bitcoin price.</td>
-<td>✅ Very significant (p ≈ 0)</td>
+<td><span style="color:green;"><strong>Very significant (p ≈ 0)</strong></span></td>
 </tr>
 </tbody>
 </table>
-<p>✅ <strong>Most Important Predictors</strong></p>
+<p><strong>Most Important Predictors</strong></p>
 <p><strong>Strongest Positive Influence</strong><br> Dow Jones Index (very strong correlation)<br> M2 Money Supply (positive monetary supply effect)<br></p>
 <p><strong>Strongest Negative Influence</strong><br> U.S. Dollar Index (strong inverse relationship with the dollar index)<br> 10 Year Treasury Yield (higher yields hurt Bitcoin price)<br></p>
 <p><strong>Insignificant Variables</strong><br> Consumer Price Index, Federal Funds Rate, Unemployment Rate, and Gold Price show no statistically significant effect in this model. That means their estimated impact on Bitcoin is uncertain or likely due to noise.</p>
@@ -384,24 +375,24 @@ data:  VAR object var_model_btc_cpi
 F-Test = 0.90497, df1 = 5, df2 = 4042, p-value = 0.4767</code></pre>
 </div>
 </div>
-<p>✅ <strong>Significant Granger Causality</strong></p>
+<p><strong>Significant Granger Causality</strong></p>
 <p><strong>10 Year Treasury Yield</strong><br> <em>p-value = 0.03218</em><br> Since the p-value is less than 0.05, we reject the null hypothesis.</p>
 <p><strong>Interpretation:</strong> Past values of 10 Year Treasury Yield Granger-cause Bitcoin price. This suggests that interest rate movements (as captured by 10 Year Treasury Yield) have predictive power over Bitcoin prices.</p>
-<p>⚠️ <strong>Marginal/Weak Evidence of Granger Causality</strong></p>
+<p><strong>Marginal/Weak Evidence of Granger Causality</strong></p>
 <p><strong>M2 Money Supply</strong><br> <em>p-value = 0.09425</em><br></p>
 <p>Although the result is not statistically significant at the 5% level, it is close to the 10% threshold.</p>
 <p><strong>Interpretation:</strong> There is some weak evidence that changes in money supply may help forecast Bitcoin price, but it’s not strong enough to draw firm conclusions.</p>
 <p><strong>U.S. Dollar Index (DXY)</strong><br> <em>p-value = 0.07193</em><br> Similar to M2, the result is marginally significant at the 10% level, suggesting a potential predictive relationship.</p>
 <p><strong>Interpretation:</strong> Dollar strength may have some predictive influence on Bitcoin, though the evidence is not strong at conventional significance levels.</p>
-<p>❌ <strong>No Granger Causality Detected</strong></p>
+<p><strong>No Granger Causality Detected</strong></p>
 <p><strong>Dow Jones Index</strong> (<em>p = 0.7632</em>)<br> <strong>Gold Price</strong> (<em>p = 0.3111</em>)<br> <strong>Unemployment Rate</strong> (<em>p = 0.4102</em>)<br> <strong>Federal Funds Rate</strong> (<em>p = 0.1282</em>)<br> <strong>Consumer Price Index (CPI)</strong> (<em>p = 0.4767</em>)<br></p>
 <p>For all of these indicators, the p-values are well above 0.10, meaning we fail to reject the null hypothesis. Interpretation: There is no statistical evidence that these variables Granger-cause Bitcoin price. Their past values do not help predict Bitcoin movements in this model.</p>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 <p>The analysis integrates insights from both a multiple linear regression model and Granger causality tests to assess the influence of various macroeconomic indicators on Bitcoin prices.</p>
-<p>From the linear regression model, several predictors showed statistically significant relationships with Bitcoin price. Most notably, the Dow Jones Index exhibited a strong positive association (p &lt; 0.001), suggesting that increases in stock market performance correlate with higher Bitcoin prices. 10 Year Treasury Yield had a significant negative effect (p &lt; 0.001), indicating that higher interest rates may dampen Bitcoin demand, possibly due to rising opportunity costs. DXY (Dollar Index) also showed a significant negative effect (p = 0.005), implying that Bitcoin tends to decline as the U.S. dollar strengthens. Meanwhile, M2 money supply had a moderate positive effect (p ≈ 0.049), suggesting liquidity expansion may support Bitcoin valuation. Other variables like CPI, FedRate, Unemployment, and Gold did not exhibit statistically significant impacts in the regression model.</p>
-<p>In contrast, the Granger causality analysis, which captures predictive relationships over time, revealed that 10 Year Treasury Yield Granger-cause Bitcoin price (p = 0.032), confirming their temporal influence. M2 money supply (p = 0.094) and DXY (p = 0.072) provided weak evidence of predictive power at the 10% significance level, but other indicators including the Dow Jones, despite its strong regression coefficient, did not Granger-cause Bitcoin price. This implies that while these factors may co-move with Bitcoin (as seen in regression), they do not necessarily have predictive power over Bitcoin’s future movements.</p>
+<p>From the linear regression model, several predictors showed statistically significant relationships with Bitcoin price. Most notably, the Dow Jones Index exhibited a strong positive association (p &lt; 0.001), suggesting that increases in stock market performance correlate with higher Bitcoin prices. 10 Year Treasury Yield had a significant negative effect (p &lt; 0.001), indicating that higher interest rates may dampen Bitcoin demand, possibly due to rising opportunity costs. DXY (Dollar Index) also showed a significant negative effect (p = 0.005), implying that Bitcoin tends to decline as the U.S. dollar strengthens. Meanwhile, M2 money supply had a moderate positive effect (p ≈ 0.049), suggesting liquidity expansion may support Bitcoin valuation. Other variables like Consumer Price Index, Federal Funds Rate, Unemployment Rate, and Gold Price did not exhibit statistically significant impacts in the regression model.</p>
+<p>In contrast, the Granger causality analysis, which captures predictive relationships over time, revealed that 10 Year Treasury Yield Granger-cause Bitcoin price (p = 0.032), confirming their temporal influence. M2 money supply (p = 0.094) and U.S. Dollar Index (p = 0.072) provided weak evidence of predictive power at the 10% significance level, but other indicators including the Dow Jones, despite its strong regression coefficient, did not Granger-cause Bitcoin price. This implies that while these factors may co-move with Bitcoin (as seen in regression), they do not necessarily have predictive power over Bitcoin’s future movements.</p>
 
 
 </section>
