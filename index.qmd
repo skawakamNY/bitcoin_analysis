@@ -7,3 +7,98 @@ execute:
 
 Estimating the price of Bitcoin is more difficult than valuing stocks or bonds because it lacks intrinsic cash flows, is driven by speculative demand, and is highly sensitive to volatile sentiment and regulatory shifts.  This project aims to investigate whether macroeconomic indicators—such as economic statistics, stock indices, bond rates, and currency strength—can serve as reliable references for identifying trends in Bitcoin’s price direction. By analyzing historical data and exploring correlations, the study seeks to understand if Bitcoin behaves similarly to traditional financial assets or exhibits unique drivers. The goal is to determine whether these conventional metrics offer predictive value in the context of cryptocurrency markets.
 The macroeconomic indicators that were chosen for in depth analysis in this project were Federal Funds Rate,Consumer Price Index, U.S. Dollar Index, M2 Money Supply, Gold Price, Unemployment Rate, 10 Year Treasury Yield and Dow Jones Index where Consumer Price Index, Federal Funds Rate, U.S. Dollar Index,M2 Money Supply, Unemployment Rate were collected from [https://fred.stlouisfed.org/](https://fred.stlouisfed.org/) and Bitcoin Price, 10 Year Treasury Yield and Dow Jones Index, Gold Price were collected from [https://finance.yahoo.com/](https://finance.yahoo.com/).  All source data were merged into single data set where estimation of coefficients, p-values, and confident intervals were computed by fitting them into linear regression models.
+
+
+```{r}
+#| label: setup
+#| warning: false
+#| message: false
+library(quantmod)
+library(tidyverse)
+library(tidymodels)
+library(lubridate)
+library(tseries)
+library(lmtest)
+library(vars)
+library(corrplot)
+
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(scales)
+```
+
+
+```{r}
+#| label: load_data
+#| warning: false
+#| message: false
+# Bitcoin price (daily)
+invisible(getSymbols("BTC-USD", src = "yahoo", from = "2020-01-01", to = "2025-07-31"))
+btc <- `BTC-USD`[, "BTC-USD.Adjusted"]
+
+invisible(getSymbols("GC=F", src = "yahoo", from = "2020-01-01", to = "2025-07-31"))
+gold <- `GC=F`[, "GC=F.Adjusted"]
+
+invisible(getSymbols("^DJI", src = "yahoo", from = "2020-01-01", to = "2025-07-31"))
+dow <- DJI[, "DJI.Adjusted"]
+
+invisible(getSymbols("DX-Y.NYB", src = "yahoo", from = "2020-01-01", to = "2025-07-31"))  # May work for DXY
+dxy <- `DX-Y.NYB`[, "DX-Y.NYB.Adjusted"]
+
+# Macroeconomic indicators from FRED
+invisible(getSymbols(c("CPIAUCSL", "FEDFUNDS", "DTWEXBGS", "M2SL", "UNRATE", "DGS10"), src = "FRED", from = "2020-01-01", to = "2025-07-31"))
+
+# Combine datasets
+data <- merge(btc, CPIAUCSL, FEDFUNDS, DTWEXBGS, M2SL, UNRATE, DGS10, gold, dow)
+colnames(data) <- c("BTC", "CPI", "FedRate", "DXY", "M2", "Unemployment", "Treasury", "gold", "dow")
+#colnames(data) <- c("Bitcoin Price", "Consumer Price Index", "Federal Funds Rate", "U.S. Dollar Index", "M2 Money Supply", "Unemployment Rate", "10 Year Treasury Yield", "Gold Price", "Dow Jones Index")
+
+# Fill missing values forward and drop remaining NAs
+data <- na.locf(data)
+data <- na.omit(data)
+```
+```{r}
+# Log returns (percent change)
+returns <- diff(log(data)) * 100
+returns <- na.omit(returns)
+#head(returns)
+```
+
+```{r}
+library(tidyverse)
+library(zoo)
+
+# Convert to data frame with Date column
+df <- data.frame(date = index(data), coredata(data))
+
+# Normalize each column using Z-score
+df_norm <- df %>%
+  pivot_longer(-date, names_to = "Variable", values_to = "Value") %>%
+  group_by(Variable) %>%
+  mutate(Normalized = (Value - mean(Value, na.rm = TRUE)) / sd(Value, na.rm = TRUE)) %>%
+  ungroup()
+
+# Extract normalized BTC as reference
+btc_norm <- df_norm %>% filter(Variable == "BTC") %>% rename(BTC_Normalized = Normalized) %>% dplyr::select(date, BTC_Normalized)
+
+# Join BTC to all other variables for each date
+df_compare <- df_norm %>%
+  filter(Variable != "BTC") %>%
+  left_join(btc_norm, by = "date")
+
+# Plot: points for both BTC and the indicator per facet
+ggplot(df_compare, aes(x = date)) +
+  geom_point(aes(y = Normalized, color = "Other Macroeconomic Indicators"), alpha = 0.5, size = 0.5) +
+  geom_point(aes(y = BTC_Normalized, color = "BTC"), alpha = 0.5, size = 0.5) +
+  facet_wrap(~ Variable, scales = "free_y", ncol = 3) +
+  scale_color_manual(values = c("BTC" = "orange", "Other Macroeconomic Indicators" = "blue")) +
+  labs(
+    title = "Normalized Bitcoin Price vs. Macroeconomic Indicators",
+    x = "Date",
+    y = "Normalized Value",
+    color = "Legend"
+  ) +
+  theme_minimal()
+
+```
