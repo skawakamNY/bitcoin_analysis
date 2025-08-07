@@ -113,8 +113,15 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -144,7 +151,13 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Estimating the price of Bitcoin is more difficult than valuing stocks or bonds because it lacks intrinsic cash flows, is driven by speculative demand, and is highly sensitive to volatile sentiment and regulatory shifts. This project aims to investigate whether macroeconomic indicators—such as economic statistics, stock indices, bond rates, and currency strength—can serve as reliable references for identifying trends in Bitcoin’s price direction. By analyzing historical data and exploring correlations, the study seeks to understand if Bitcoin behaves similarly to traditional financial assets or exhibits unique drivers. The goal is to determine whether these conventional metrics offer predictive value in the context of cryptocurrency markets. The macroeconomic indicators that were chosen for in depth analysis in this project were Federal Funds Rate,Consumer Price Index, U.S. Dollar Index, M2 Money Supply, Gold Price, Unemployment Rate, 10 Year Treasury Yield and Dow Jones Index where Consumer Price Index, Federal Funds Rate, U.S. Dollar Index,M2 Money Supply, Unemployment Rate were collected from <a href="https://fred.stlouisfed.org/">https://fred.stlouisfed.org/</a> and Bitcoin Price, 10 Year Treasury Yield and Dow Jones Index, Gold Price were collected from <a href="https://finance.yahoo.com/">https://finance.yahoo.com/</a>. All source data were merged into single data set where estimation of coefficients, p-values, and confident intervals were computed by fitting them into linear regression models.</p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Estimating the price of Bitcoin is more difficult than valuing stocks or bonds because it lacks intrinsic cash flows, is driven by speculative demand, and is highly sensitive to volatile sentiment and regulatory shifts. This project aims to investigate whether macroeconomic indicators—such as economic statistics, stock indices, bond rates, and currency strength—can serve as reliable references for identifying trends in Bitcoin’s price direction. By analyzing historical data and exploring correlations, the study seeks to understand if Bitcoin behaves similarly to traditional financial assets or exhibits unique drivers. The goal is to determine whether these conventional metrics offer predictive value in the context of cryptocurrency markets.</p>
+</section>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
+<p>The macroeconomic indicators that were chosen for in depth analysis in this project were Federal Funds Rate,Consumer Price Index, U.S. Dollar Index, M2 Money Supply, Gold Price, Unemployment Rate, 10 Year Treasury Yield and Dow Jones Index where Consumer Price Index, Federal Funds Rate, U.S. Dollar Index,M2 Money Supply, Unemployment Rate were collected from <a href="https://fred.stlouisfed.org/">https://fred.stlouisfed.org/</a> and Bitcoin Price, 10 Year Treasury Yield and Dow Jones Index, Gold Price were collected from <a href="https://finance.yahoo.com/">https://finance.yahoo.com/</a>. All source data were merged into single data set where estimation of coefficients, p-values, and confident intervals were computed by fitting them into linear regression models.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -156,6 +169,7 @@ ul.task-list li input[type="checkbox"] {
 </div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
